@@ -1,12 +1,63 @@
+{% use '_wrapper.html.twig' %}
+{% use '_logout.html.twig' %}
+
 <!DOCTYPE html>
-<html>
+<html lang="{{ app.request.locale }}">
+
     <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="{% block app__base__description %}Insigne Test{% endblock %}">
+        <meta name="author" content="{% block app__base__author %}{% endblock %}">
+        <title>{% block app__base__browser_title %}Insigne Test{% endblock %}</title>
+
+        {% block app__base__core_css %}
+            <!-- Template fonts-->
+            <link href="{{ asset('assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css"/>
+            <link href="{{ asset('assets/css/nunito.css') }}" rel="stylesheet"/>
+            <!-- Template styles-->
+            <link href="{{ asset('assets/css/sb-admin-2.min.css') }}" rel="stylesheet"/>
+            <link href="{{ asset('assets/css/fix.css') }}" rel="stylesheet"/>
+        {% endblock %}
+
+        <!-- Custom styles for this page-->
+        {% block app__base__extra_css %}{% endblock %}
     </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
+
+    {% block app__base__body %}
+        <body id="page-top">
+
+            <!-- Page Wrapper -->
+            {% block app__wrapper %}
+                {{ parent() }}
+            {% endblock %}
+            <!-- End of Page Wrapper -->
+
+            <!-- Scroll to Top Button-->
+            <a class="scroll-to-top rounded" href="#page-top">
+                <i class="fas fa-angle-up"></i>
+            </a>
+
+            {% block app__modal %}
+                <!-- Logout Modal-->
+                {% block app__logout %}
+                    {{ parent() }}
+                {% endblock %}
+            {% endblock %}
+
+            {% block app__base__core_js %}
+                <!-- Template JavaScript-->
+                <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
+                <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+                <script src="{{ asset('assets/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+                <script src="{{ asset('assets/js/sb-admin-2.min.js') }}"></script>
+            {% endblock %}
+
+            <!-- Custom JavaScript for this page-->
+            {% block app__base__extra_js %}{% endblock %}
+
+        </body>
+    {% endblock %}
+
 </html>
