@@ -63,12 +63,14 @@ class AppFixtures extends Fixture
             $firstName = 'user';
             $lastName = "number_{$index}";
             $login = "{$firstName}_{$lastName}";
+            $email = "{$firstName}@{$lastName}";
 
             $user = (new User())
                 ->addGroup($defaultGroup)
                 ->setLogin($login)
                 ->setFirstName($firstName)
-                ->setLastName($lastName);
+                ->setLastName($lastName)
+                ->setEmail($email);
 
             $user->setPassword($this->passwordEncoder->encodePassword($user, $login));
             $manager->persist($user);

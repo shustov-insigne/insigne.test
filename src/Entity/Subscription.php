@@ -58,6 +58,17 @@ class Subscription
     }
 
     /**
+     * @return \DateTimeInterface
+     */
+    public function getDateTime(): \DateTimeInterface
+    {
+        $dt = new \DateTime();
+        $dt->setTimestamp($this->date);
+
+        return $dt;
+    }
+
+    /**
      * @return User|null
      */
     public function getUser(): ?User

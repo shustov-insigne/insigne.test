@@ -1,6 +1,6 @@
 ;
-if (typeof LogemaSoftRetail !== 'function') var LogemaSoftRetail = function () {};
-if (typeof LogemaSoftRetail.DataTables !== 'function') LogemaSoftRetail.DataTables = function () {};
+if (typeof InsigneTest !== 'function') var InsigneTest = function () {};
+if (typeof InsigneTest.DataTables !== 'function') InsigneTest.DataTables = function () {};
 
 /**
  * https://datatables.net/examples/server_side/pipeline.html
@@ -9,7 +9,7 @@ if (typeof LogemaSoftRetail.DataTables !== 'function') LogemaSoftRetail.DataTabl
  * @returns {Function}
  * @constructor
  */
-LogemaSoftRetail.DataTables.Pipeline = function (opts) {
+InsigneTest.DataTables.Pipeline = function (opts) {
 
 	// Configuration options
 	var conf = $.extend({

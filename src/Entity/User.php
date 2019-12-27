@@ -34,6 +34,11 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
+    private $email;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
     private $lastName;
 
     /**
@@ -45,6 +50,11 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $secondName;
+
+    /**
+     * @ORM\Column(type="string", length=512, nullable=true)
+     */
+    private $fullName;
 
     /**
      * @var Subscription|null
@@ -93,6 +103,25 @@ class User implements UserInterface
     public function setLogin(string $login): self
     {
         $this->login = $login;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     * @return User
+     */
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }
@@ -189,6 +218,7 @@ class User implements UserInterface
     public function setFirstName(?string $firstName): self
     {
         $this->firstName = $firstName;
+        $this->resetFullName();
 
         return $this;
     }
@@ -208,6 +238,7 @@ class User implements UserInterface
     public function setSecondName(?string $secondName): self
     {
         $this->secondName = $secondName;
+        $this->resetFullName();
 
         return $this;
     }
@@ -227,8 +258,41 @@ class User implements UserInterface
     public function setLastName(?string $lastName): self
     {
         $this->lastName = $lastName;
+        $this->resetFullName();
 
         return $this;
+    }
+
+    /**
+     * @return User
+     */
+    private function resetFullName(): self
+    {
+        $pieces = [];
+
+        if ($this->lastName) {
+            $pieces[] = $this->lastName;
+        }
+
+        if ($this->firstName) {
+            $pieces[] = $this->firstName;
+        }
+
+        if ($this->secondName) {
+            $pieces[] = $this->secondName;
+        }
+
+        $this->fullName = implode(' ', $pieces);
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getFullName(): ?string
+    {
+        return $this->fullName;
     }
 
     /**

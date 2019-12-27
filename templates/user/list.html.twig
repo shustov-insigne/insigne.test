@@ -1,0 +1,174 @@
+{% extends 'base.html.twig' %}
+
+{% block app__base__browser_title %}Список пользователей{% endblock %}
+{% block app__wrapper__page_title %}Список пользователей{% endblock %}
+
+{% block app__base__extra_css %}
+	<link href="{{ asset('assets/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block app__wrapper__content %}
+
+	<div class="card shadow mb-4">
+		<div class="card-header py-3">
+			<h6 class="m-0 font-weight-bold text-primary">Фильтр</h6>
+		</div>
+		<div class="card-body">
+
+			<div class="row">
+				<div class="col col-12 col-xl-6">
+
+					<div class="mb-3">
+						<label for="idInput">ID пользователя</label>
+						<input class="form-control"
+							   id="idInput">
+					</div>
+
+					<div class="mb-3">
+						<label for="loginInput">Логин</label>
+						<input class="form-control"
+							   id="loginInput">
+					</div>
+
+					<div class="mb-3">
+						<label for="fullNameInput">ФИО</label>
+						<input class="form-control"
+							   id="fullNameInput">
+					</div>
+
+					<div class="mb-3">
+						<label for="emailInput">Email</label>
+						<input class="form-control"
+							   id="emailInput">
+					</div>
+
+					<button id="tableSearchButton" type="button" class="btn btn-sm btn-primary">Найти</button>
+					<button id="tableClearSearchButton" type="button" class="btn btn-sm btn-primary ml-3">Сбросить фильтр</button>
+
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+
+	<div class="card shadow mb-4">
+		<div id="users-table-card" class="card-body">
+			<div class="table-responsive">
+				<table class="table table-bordered" id="users-table" width="100%" cellspacing="0"></table>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block app__base__extra_js %}
+	{# vendor #}
+	<script src="{{ asset('assets/vendor/datatables/jquery.dataTables.min.js') }}"></script>
+	<script src="{{ asset('assets/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+	<script src="{{ asset('assets/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+	{# custom #}
+	<script src="{{ asset('assets/js/dataTables.pipeline.js') }}"></script>
+	<script>
+		$(document).ready(function () {
+
+			var tableCard = $('#users-table-card');
+			
+			var idInput = $('#idInput');
+			var loginInput = $('#loginInput');
+			var fullNameInput = $('#fullNameInput');
+			var emailInput = $('#emailInput');
+
+			var pagesToCache = 5;
+			{#var detailPathTemplate = '{{ path('app_user', {id: 'user_id'}) }}';#}
+			var detailPathTemplate = '#';
+
+			var columns = [];
+			var column = {};
+
+			{% for column in columns %}
+
+				column = {
+					title: '{{ column.title }}',
+					data: '{{ column.data }}',
+					searchable: ('{{ column.searchable ?? 'N' }}' === 'Y'),
+					orderable: ('{{ column.orderable ?? 'N' }}' === 'Y')
+				};
+
+				if (column.data === 'number') {
+					column.render = function(data, type, row, meta) {
+
+						if (type === 'display') {
+							// data = '<a href="' + detailPathTemplate.replace('user_id', row.id) + '">' + data + '</a>';
+							data = '<a href="#">' + data + '</a>';
+						}
+
+						return data;
+					}
+				}
+
+				columns.push(column);
+
+			{% endfor %}
+
+			// самый корректный способ скрыть стандартное поле "поиск"
+			var domParamValue = "<'row'<'col-12 col-lg-6'l><'col-12 col-lg-6'>>" +
+				"<'row'<'col-12'tr>>" +
+				"<'row'<'col-12 col-lg-5'i><'col-12 col-lg-7'p>>";
+
+			var table = $('#users-table')
+				.on('processing.dt', function (e, settings, processing) {
+					tableCard.toggleClass('disabled-block', processing)
+				})
+				.DataTable({
+					searching: true,
+					pageLength: 50,
+					processing: true,
+					serverSide: true,
+					ajax: InsigneTest.DataTables.Pipeline({
+						url: "{{ path('app_users_grid') }}",
+						type: "POST",
+						dataType: "json",
+						pages: pagesToCache, // number of pages to cache
+						data: function (data) {
+							data.customSearch = {
+								id: idInput.val(),
+								login: loginInput.val(),
+                                fullName: fullNameInput.val(),
+                                email: emailInput.val()
+							}
+						}
+					}),
+					columns: columns,
+					language: {
+						"url": "{{ asset('assets/vendor/datatables/i18n/ru.json') }}"
+					},
+					search: {
+						caseInsensitive: false,
+						regex: false,
+						smart: false
+					},
+					dom: domParamValue
+				});
+
+			$('#tableSearchButton').on('click', function () {
+				// TODO: подумать, можно ли убрать этот костыль
+				table.search(Date.now()).draw();
+			});
+
+			$('#tableClearSearchButton').on('click', function () {
+                idInput.val('');
+                loginInput.val('');
+                fullNameInput.val('');
+                emailInput.val('');
+				// TODO: подумать, можно ли убрать этот костыль
+				table.search(Date.now()).draw();
+			});
+
+			$('#users-table tbody').on('dblclick', 'tr', function () {
+				var data = table.row(this).data();
+				window.location.href = detailPathTemplate.replace('user_id', data.id);
+			} );
+		});
+	</script>
+{% endblock %}
