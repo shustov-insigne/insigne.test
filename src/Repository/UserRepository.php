@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Group;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -34,5 +36,30 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newEncodedPassword);
         $this->_em->persist($user);
         $this->_em->flush();
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return User|null
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\Query\QueryException
+     */
+    public function getNonAdminUserWithSubscription(int $id)
+    {
+        $criteria = Criteria::create();
+        $criteria->andWhere(Criteria::expr()->andX(
+            Criteria::expr()->eq('u.id', $id),
+            Criteria::expr()->neq('g.id', Group::BROWSER_ADMIN)
+        ));
+
+        return $this->createQueryBuilder('u')
+            ->select(['u', 's'])
+            ->leftJoin('u.subscription', 's')
+            ->join('u.groups', 'g')
+            ->addCriteria($criteria)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

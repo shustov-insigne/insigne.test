@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Frontend;
+namespace App\Controller\PublicScope;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

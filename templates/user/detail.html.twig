@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% use 'user/_update_info.html.twig' %}
+
+{% set title = 'Пользователь № ' ~ userId %}
+
+{% block app__base__browser_title %}{{ title }}{% endblock %}
+{% block app__wrapper__page_title %}{{ title }}{% endblock %}
+
+{% block app__base__extra_css %}
+    <link href="{{ asset('assets/vendor/datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block app__wrapper__content %}
+
+    <div class="card shadow mb-3">
+
+        <div id="user-container" class="card-body">
+            <div class="col col-12 col-xl-6">
+                <div class="form-group row">
+                    <label for="numberInput" class="col-sm-12 col-lg-3 col-form-label">Логин</label>
+                    <div class="col-sm-12 col-lg-9">
+                        <input class="form-control" id="login" value="{{ login }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="dateInput" class="col-sm-12 col-lg-3 col-form-label">Email</label>
+                    <div class="col-sm-12 col-lg-9">
+                        <input class="form-control" id="email" value="{{ email }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="sourceStore" class="col-sm-12 col-lg-3 col-form-label">Фамилия</label>
+                    <div class="col-sm-12 col-lg-9">
+                        <input class="form-control" id="last-name" value="{{ lastName }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="destinationStore" class="col-sm-12 col-lg-3 col-form-label">Имя</label>
+                    <div class="col-sm-12 col-lg-9">
+                        <input class="form-control" id="first-name" value="{{ firstName }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="sourceStore" class="col-sm-12 col-lg-3 col-form-label">Отчество</label>
+                    <div class="col-sm-12 col-lg-9">
+                        <input class="form-control" id="second-name" value="{{ secondName }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="dateInput" class="col-sm-12 col-lg-3 col-form-label">Дата подписки</label>
+                    <div class="col-sm-12 col-lg-9">
+                        <input class="form-control" id="subscription-date" value="{{ subscriptionDate }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="dateInput" class="col-sm-12 col-lg-3 col-form-label">Пароль</label>
+                    <div class="col-sm-12 col-lg-9">
+                        <input type="password" class="form-control" id="password">
+                    </div>
+                </div>
+                <div class="form-group row float-right mr-1">
+                    <button type="button" id="save-btn" class="btn btn-sm btn-primary">Сохранить</button>
+                    <a href="{{ path('app_users') }}" class="btn btn-sm btn-primary ml-3">Назад</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block app__modal %}
+    {{ parent() }}
+    {% block app__user__update_info %}
+        {{ parent() }}
+    {% endblock %}
+{% endblock %}
+
+{% block app__base__extra_js %}
+    <script src="{{ asset('assets/vendor/datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/datepicker/locales/bootstrap-datepicker.ru.min.js') }}"></script>
+    <script src="{{ asset('assets/js/user/DetailController.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            var detailUserController = new Insigne.Test.User.DetailController();
+            detailUserController.init({
+                ajaxUrl: '{{ path('app_user_update', {id: userId}) }}',
+                submitBtnId: 'save-btn',
+                loginInputId: 'login',
+                emailInputId: 'email',
+                lastNameInputId: 'last-name',
+                firstNameInputId: 'first-name',
+                secondNameInputId: 'second-name',
+                subscriptionDateInputId: 'subscription-date',
+                passwordInputId: 'password',
+                modalId: 'user-update-info'
+            });
+        });
+    </script>
+{% endblock %}

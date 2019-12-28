@@ -82,6 +82,8 @@ class NonAdminUsersGrid
     }
 
     /**
+     * https://datatables.net/manual/server-side
+     *
      * @param ParameterBag $request
      * @return array
      * @throws \Doctrine\ORM\NoResultException
@@ -239,7 +241,7 @@ class NonAdminUsersGrid
                 'login' => $user->getLogin(),
                 'fullName' => $user->getFullName() ?: $this->noDataStub,
                 'email' => $user->getEmail() ?: $this->noDataStub,
-                'date' => isset($subscription) ? ($subscription->getDateTime()->format($this->dateFormat)) : $this->noDataStub,
+                'date' => isset($subscription) ? ($subscription->getDateObject()->format($this->dateFormat)) : $this->noDataStub,
             ];
         }
 

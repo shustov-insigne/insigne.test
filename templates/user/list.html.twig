@@ -80,8 +80,7 @@
 			var emailInput = $('#emailInput');
 
 			var pagesToCache = 5;
-			{#var detailPathTemplate = '{{ path('app_user', {id: 'user_id'}) }}';#}
-			var detailPathTemplate = '#';
+			var detailPathTemplate = '{{ path('app_user', {id: 'user_id'}) }}';
 
 			var columns = [];
 			var column = {};
@@ -95,12 +94,11 @@
 					orderable: ('{{ column.orderable ?? 'N' }}' === 'Y')
 				};
 
-				if (column.data === 'number') {
+				if (column.data === 'id') {
 					column.render = function(data, type, row, meta) {
 
 						if (type === 'display') {
-							// data = '<a href="' + detailPathTemplate.replace('user_id', row.id) + '">' + data + '</a>';
-							data = '<a href="#">' + data + '</a>';
+							data = '<a href="' + detailPathTemplate.replace('user_id', row.id) + '">' + data + '</a>';
 						}
 
 						return data;

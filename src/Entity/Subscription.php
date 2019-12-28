@@ -23,6 +23,11 @@ class Subscription
     private $date;
 
     /**
+     * @var \DateTime
+     */
+    private $dateObject;
+
+    /**
      * @var User
      *
      * @ORM\OneToOne(targetEntity="App\Entity\User", inversedBy="subscription")
@@ -47,25 +52,30 @@ class Subscription
     }
 
     /**
-     * @param int $timestamp
-     * @return Subscription
+     * @param bool $reInit
+     * @return \DateTime
      */
-    public function setDateTimestamp(int $timestamp): self
+    public function getDateObject($reInit = false): \DateTime
     {
-        $this->date = $timestamp;
+        if (!isset($this->dateObject) || $reInit) {
+            $this->dateObject = new \DateTime();
+            $this->dateObject->setTimestamp($this->date);
+        }
 
-        return $this;
+        return $this->dateObject;
     }
 
     /**
-     * @return \DateTimeInterface
+     * @param \DateTime $dt
+     * @return Subscription
      */
-    public function getDateTime(): \DateTimeInterface
+    public function setDateObject(\DateTime $dt): self
     {
-        $dt = new \DateTime();
-        $dt->setTimestamp($this->date);
+        $dt->setTime(23, 59, 59);
+        $this->dateObject = $dt;
+        $this->date = $dt->getTimestamp();
 
-        return $dt;
+        return $this;
     }
 
     /**
