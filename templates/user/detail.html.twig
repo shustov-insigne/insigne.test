@@ -81,8 +81,8 @@
     <script src="{{ asset('assets/js/user/DetailController.js') }}"></script>
     <script>
         $(document).ready(function () {
-            var detailUserController = new Insigne.Test.User.DetailController();
-            detailUserController.init({
+            var controller = new Insigne.Test.User.DetailController();
+            controller.init({
                 ajaxUrl: '{{ path('app_user_update', {id: userId}) }}',
                 submitBtnId: 'save-btn',
                 loginInputId: 'login',

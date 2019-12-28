@@ -19,31 +19,31 @@
 				<div class="col col-12 col-xl-6">
 
 					<div class="mb-3">
-						<label for="idInput">ID пользователя</label>
+						<label for="id-input">ID пользователя</label>
 						<input class="form-control"
-							   id="idInput">
+							   id="id-input">
 					</div>
 
 					<div class="mb-3">
-						<label for="loginInput">Логин</label>
+						<label for="login-input">Логин</label>
 						<input class="form-control"
-							   id="loginInput">
+							   id="login-input">
 					</div>
 
 					<div class="mb-3">
-						<label for="fullNameInput">ФИО</label>
+						<label for="full-name-input">ФИО</label>
 						<input class="form-control"
-							   id="fullNameInput">
+							   id="full-name-input">
 					</div>
 
 					<div class="mb-3">
-						<label for="emailInput">Email</label>
+						<label for="email-input">Email</label>
 						<input class="form-control"
-							   id="emailInput">
+							   id="email-input">
 					</div>
 
-					<button id="tableSearchButton" type="button" class="btn btn-sm btn-primary">Найти</button>
-					<button id="tableClearSearchButton" type="button" class="btn btn-sm btn-primary ml-3">Сбросить фильтр</button>
+					<button id="search-btn" type="button" class="btn btn-sm btn-primary">Найти</button>
+					<button id="clear-btn" type="button" class="btn btn-sm btn-primary ml-3">Сбросить фильтр</button>
 
 				</div>
 			</div>
@@ -69,104 +69,38 @@
 	<script src="{{ asset('assets/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 	{# custom #}
 	<script src="{{ asset('assets/js/dataTables.pipeline.js') }}"></script>
+	<script src="{{ asset('assets/js/user/ListController.js') }}"></script>
 	<script>
-		$(document).ready(function () {
+        $(document).ready(function () {
 
-			var tableCard = $('#users-table-card');
-			
-			var idInput = $('#idInput');
-			var loginInput = $('#loginInput');
-			var fullNameInput = $('#fullNameInput');
-			var emailInput = $('#emailInput');
+            var columns = [];
+            var column = null;
 
-			var pagesToCache = 5;
-			var detailPathTemplate = '{{ path('app_user', {id: 'user_id'}) }}';
-
-			var columns = [];
-			var column = {};
-
-			{% for column in columns %}
-
+            {% for column in columns %}
 				column = {
 					title: '{{ column.title }}',
 					data: '{{ column.data }}',
 					searchable: ('{{ column.searchable ?? 'N' }}' === 'Y'),
 					orderable: ('{{ column.orderable ?? 'N' }}' === 'Y')
 				};
+            	columns.push(column);
+            {% endfor %}
 
-				if (column.data === 'id') {
-					column.render = function(data, type, row, meta) {
-
-						if (type === 'display') {
-							data = '<a href="' + detailPathTemplate.replace('user_id', row.id) + '">' + data + '</a>';
-						}
-
-						return data;
-					}
-				}
-
-				columns.push(column);
-
-			{% endfor %}
-
-			// самый корректный способ скрыть стандартное поле "поиск"
-			var domParamValue = "<'row'<'col-12 col-lg-6'l><'col-12 col-lg-6'>>" +
-				"<'row'<'col-12'tr>>" +
-				"<'row'<'col-12 col-lg-5'i><'col-12 col-lg-7'p>>";
-
-			var table = $('#users-table')
-				.on('processing.dt', function (e, settings, processing) {
-					tableCard.toggleClass('disabled-block', processing)
-				})
-				.DataTable({
-					searching: true,
-					pageLength: 50,
-					processing: true,
-					serverSide: true,
-					ajax: InsigneTest.DataTables.Pipeline({
-						url: "{{ path('app_users_grid') }}",
-						type: "POST",
-						dataType: "json",
-						pages: pagesToCache, // number of pages to cache
-						data: function (data) {
-							data.customSearch = {
-								id: idInput.val(),
-								login: loginInput.val(),
-                                fullName: fullNameInput.val(),
-                                email: emailInput.val()
-							}
-						}
-					}),
-					columns: columns,
-					language: {
-						"url": "{{ asset('assets/vendor/datatables/i18n/ru.json') }}"
-					},
-					search: {
-						caseInsensitive: false,
-						regex: false,
-						smart: false
-					},
-					dom: domParamValue
-				});
-
-			$('#tableSearchButton').on('click', function () {
-				// TODO: подумать, можно ли убрать этот костыль
-				table.search(Date.now()).draw();
-			});
-
-			$('#tableClearSearchButton').on('click', function () {
-                idInput.val('');
-                loginInput.val('');
-                fullNameInput.val('');
-                emailInput.val('');
-				// TODO: подумать, можно ли убрать этот костыль
-				table.search(Date.now()).draw();
-			});
-
-			$('#users-table tbody').on('dblclick', 'tr', function () {
-				var data = table.row(this).data();
-				window.location.href = detailPathTemplate.replace('user_id', data.id);
-			} );
-		});
+            var controller = new Insigne.Test.User.ListController();
+            controller.init({
+				ajaxUrl: "{{ path('app_users_grid') }}",
+                languageUrl: "{{ asset('assets/vendor/datatables/i18n/ru.json') }}",
+                userDetailPathTemplate: "{{ path('app_user', {id: 'user_id'}) }}",
+				columns: columns,
+                tableCardId: 'users-table-card',
+				tableId: 'users-table',
+				idInputId: 'id-input',
+				loginInputId: 'login-input',
+				fullNameInputId: 'full-name-input',
+				emailInputId: 'email-input',
+				searchBtnId: 'search-btn',
+				clearBtnId: 'clear-btn'
+            });
+        });
 	</script>
 {% endblock %}

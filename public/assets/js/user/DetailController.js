@@ -37,8 +37,6 @@ Insigne.Test.User.DetailController = (function () {
     
     const init = function (params) {
         
-        console.log(params);
-        
         self.ajaxUrl = params.ajaxUrl;
 
         self.submitBtn = $('#' + params.submitBtnId);
