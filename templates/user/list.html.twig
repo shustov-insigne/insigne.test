@@ -69,7 +69,7 @@
 	<script src="{{ asset('assets/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 	{# custom #}
 	<script src="{{ asset('assets/js/dataTables.pipeline.js') }}"></script>
-	<script src="{{ asset('assets/js/user/ListController.js') }}"></script>
+	<script src="{{ asset('assets/js/user/ListController.min.js') }}"></script>
 	<script>
         $(document).ready(function () {
 
@@ -86,7 +86,7 @@
             	columns.push(column);
             {% endfor %}
 
-            var controller = new Insigne.Test.User.ListController();
+            var controller = new InsigneTest.User.ListController();
             controller.init({
 				ajaxUrl: "{{ path('app_users_grid') }}",
                 languageUrl: "{{ asset('assets/vendor/datatables/i18n/ru.json') }}",

@@ -1,8 +1,7 @@
-if ( typeof Insigne !== 'function' ) var Insigne = function () {};
-if ( typeof Insigne.Test !== 'function' ) Insigne.Test = function () {};
-if ( typeof Insigne.Test.User !== 'function' ) Insigne.Test.User = function () {};
+if ( typeof InsigneTest !== 'function' ) InsigneTest = function () {};
+if ( typeof InsigneTest.User !== 'function' ) InsigneTest.User = function () {};
 
-Insigne.Test.User.DetailController = (function () {
+InsigneTest.User.DetailController = (function () {
 
     'use strict';
     
@@ -24,7 +23,8 @@ Insigne.Test.User.DetailController = (function () {
         language: null,
         orientation: null
     };
-    
+
+    self.form = null;
     self.submitBtn = null;
     self.loginInput = null;
     self.emailInput = null;
@@ -39,6 +39,7 @@ Insigne.Test.User.DetailController = (function () {
         
         self.ajaxUrl = params.ajaxUrl;
 
+        self.form = $('#' + params.formId);
         self.submitBtn = $('#' + params.submitBtnId);
         self.loginInput = $('#' + params.loginInputId);
         self.emailInput = $('#' + params.emailInputId);
@@ -60,6 +61,7 @@ Insigne.Test.User.DetailController = (function () {
         }
 
         initDatepicker();
+        bindValidator();
         bindSubmitBtnClick();
     };
 
@@ -74,10 +76,45 @@ Insigne.Test.User.DetailController = (function () {
             todayHighlight: true
         });
     };
-    
+
+    const bindValidator = function () {
+
+        $.validator.addMethod("strictEmail", function(value) {
+            var expr = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return expr .test(String(value).toLowerCase());
+        }, 'Incorrect email');
+
+        self.form.validate({
+            errorClass: 'text-danger',
+            rules: {
+                login: {
+                    required: true
+                },
+                email: {
+                    required: true,
+                    strictEmail: true
+                }
+            },
+            messages: {
+                login: {
+                    required: 'Поле обязательно для заполнения'
+                },
+                email: {
+                    required: 'Поле обязательно для заполнения',
+                    strictEmail: 'Указан некоректный email'
+                }
+            }
+        });
+    };
+
     const bindSubmitBtnClick = function () {
 
         self.submitBtn.on('click', function (e) {
+
+            if (!self.form.valid()) {
+                e.preventDefault();
+                return false;
+            }
 
             $.ajax(self.ajaxUrl, {
                 type: "PUT",

@@ -15,48 +15,48 @@
 
     <div class="card shadow mb-3">
 
-        <div id="user-container" class="card-body">
+        <form id="user-container" class="card-body">
             <div class="col col-12 col-xl-6">
                 <div class="form-group row">
                     <label for="numberInput" class="col-sm-12 col-lg-3 col-form-label">Логин</label>
                     <div class="col-sm-12 col-lg-9">
-                        <input class="form-control" id="login" value="{{ login }}">
+                        <input class="form-control" name="login" id="login" value="{{ login }}">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="dateInput" class="col-sm-12 col-lg-3 col-form-label">Email</label>
                     <div class="col-sm-12 col-lg-9">
-                        <input class="form-control" id="email" value="{{ email }}">
+                        <input class="form-control" name="email" id="email" value="{{ email }}">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="sourceStore" class="col-sm-12 col-lg-3 col-form-label">Фамилия</label>
                     <div class="col-sm-12 col-lg-9">
-                        <input class="form-control" id="last-name" value="{{ lastName }}">
+                        <input class="form-control" name="last-name" id="last-name" value="{{ lastName }}">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="destinationStore" class="col-sm-12 col-lg-3 col-form-label">Имя</label>
                     <div class="col-sm-12 col-lg-9">
-                        <input class="form-control" id="first-name" value="{{ firstName }}">
+                        <input class="form-control" name="first-name" id="first-name" value="{{ firstName }}">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="sourceStore" class="col-sm-12 col-lg-3 col-form-label">Отчество</label>
                     <div class="col-sm-12 col-lg-9">
-                        <input class="form-control" id="second-name" value="{{ secondName }}">
+                        <input class="form-control" name="second-name" id="second-name" value="{{ secondName }}">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="dateInput" class="col-sm-12 col-lg-3 col-form-label">Дата подписки</label>
                     <div class="col-sm-12 col-lg-9">
-                        <input class="form-control" id="subscription-date" value="{{ subscriptionDate }}">
+                        <input class="form-control" name="subscription-date" id="subscription-date" value="{{ subscriptionDate }}">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="dateInput" class="col-sm-12 col-lg-3 col-form-label">Пароль</label>
                     <div class="col-sm-12 col-lg-9">
-                        <input type="password" class="form-control" id="password">
+                        <input type="password" class="form-control" name="password"  id="password">
                     </div>
                 </div>
                 <div class="form-group row float-right mr-1">
@@ -64,7 +64,7 @@
                     <a href="{{ path('app_users') }}" class="btn btn-sm btn-primary ml-3">Назад</a>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 {% endblock %}
 
@@ -76,14 +76,16 @@
 {% endblock %}
 
 {% block app__base__extra_js %}
+    <script src="{{ asset('assets/vendor/jquery/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/datepicker/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/datepicker/locales/bootstrap-datepicker.ru.min.js') }}"></script>
-    <script src="{{ asset('assets/js/user/DetailController.js') }}"></script>
+    <script src="{{ asset('assets/js/user/DetailController.min.js') }}"></script>
     <script>
         $(document).ready(function () {
-            var controller = new Insigne.Test.User.DetailController();
+            var controller = new InsigneTest.User.DetailController();
             controller.init({
                 ajaxUrl: '{{ path('app_user_update', {id: userId}) }}',
+                formId: 'user-container',
                 submitBtnId: 'save-btn',
                 loginInputId: 'login',
                 emailInputId: 'email',

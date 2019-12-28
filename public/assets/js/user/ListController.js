@@ -1,8 +1,7 @@
-if ( typeof Insigne !== 'function' ) var Insigne = function () {};
-if ( typeof Insigne.Test !== 'function' ) Insigne.Test = function () {};
-if ( typeof Insigne.Test.User !== 'function' ) Insigne.Test.User = function () {};
+if ( typeof InsigneTest !== 'function' ) InsigneTest = function () {};
+if ( typeof InsigneTest.User !== 'function' ) InsigneTest.User = function () {};
 
-Insigne.Test.User.ListController = (function () {
+InsigneTest.User.ListController = (function () {
 
     'use strict';
 
