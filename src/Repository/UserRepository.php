@@ -43,23 +43,49 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      *
      * @return User|null
      *
-     * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\Query\QueryException
      */
     public function getNonAdminUserWithSubscription(int $id)
     {
         $criteria = Criteria::create();
-        $criteria->andWhere(Criteria::expr()->andX(
-            Criteria::expr()->eq('u.id', $id),
-            Criteria::expr()->neq('g.id', Group::BROWSER_ADMIN)
-        ));
+        $criteria->where(Criteria::expr()->eq('u.id', $id));
+
+        $users = $this->getNonAdminUsersWithSubscription($criteria);
+
+        return (count($users) > 0) ? array_shift($users) : null;
+    }
+
+    /**
+     * TODO: переделать в подзапрос
+     *
+     * @param Criteria $criteria
+     *
+     * @return User[]
+     *
+     * @throws \Doctrine\ORM\Query\QueryException
+     */
+    public function getNonAdminUsersWithSubscription(Criteria $criteria = null)
+    {
+        $adminIds = $this->createQueryBuilder('u')
+            ->select(['u.id'])
+            ->leftJoin('u.groups', 'g')
+            ->where('g.id = :groupId')
+            ->setParameter('groupId', Group::BROWSER_ADMIN)
+            ->getQuery()
+            ->getArrayResult();
+
+        $innerCriteria = Criteria::create();
+        $innerCriteria->where(Criteria::expr()->notIn('u.id', $adminIds));
+
+        if (isset($criteria)) {
+            $innerCriteria->andWhere($criteria->getWhereExpression());
+        }
 
         return $this->createQueryBuilder('u')
             ->select(['u', 's'])
             ->leftJoin('u.subscription', 's')
-            ->join('u.groups', 'g')
-            ->addCriteria($criteria)
+            ->addCriteria($innerCriteria)
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
     }
 }

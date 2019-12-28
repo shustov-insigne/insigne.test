@@ -8,16 +8,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/users")
- *
- * Class UserController
- * @package App\Controller\PublicScope
- */
 class UserController extends AbstractController
 {
     /**
-     * @Route("", name="app_users")
+     * @Route("/users", name="app_users")
      *
      * @param NonAdminUsersGrid $grid
      *
@@ -31,7 +25,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="app_user")
+     * @Route("user/{id}", name="app_user")
      *
      * @param mixed $id
      * @param UserRepository $repository

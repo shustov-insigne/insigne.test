@@ -95,12 +95,12 @@ Insigne.Test.User.DetailController = (function () {
                 }),
                 success: function (data, textStatus, jqXHR) {
 
-                    if (data.result === 'success') {
+                    if (data.success) {
                         self.modalWindow.find('.modal-title').text('Информационное сообщение');
                         self.modalWindow.find('.modal-body').text('Данные успешно обновлены');
                     } else {
                         self.modalWindow.find('.modal-title').text('Ошибка');
-                        self.modalWindow.find('.modal-body').text(data.description);
+                        self.modalWindow.find('.modal-body').text(data.error.description);
                     }
 
                     self.modalWindow.modal('show');

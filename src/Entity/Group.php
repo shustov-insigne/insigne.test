@@ -14,6 +14,7 @@ class Group
 {
 	const BROWSER_USER = 'BROWSER_USER';
 	const BROWSER_ADMIN = 'BROWSER_ADMIN';
+	const API_USER = 'API_USER';
 
 	/**
 	 * @ORM\Id()

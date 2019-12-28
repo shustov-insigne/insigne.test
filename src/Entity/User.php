@@ -6,13 +6,18 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Normalizer\NormalizableInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="app_user")
  */
-class User implements UserInterface
+class User implements UserInterface, NormalizableInterface
 {
+    public const API_USER_LOGIN = 'api_user';
+
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -27,7 +32,7 @@ class User implements UserInterface
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $password;
 
@@ -361,5 +366,22 @@ class User implements UserInterface
         $this->groups->clear();
 
         return $this;
+    }
+
+    /**
+     * @param NormalizerInterface $normalizer
+     * @param null $format
+     * @param array $context
+     *
+     * @return array
+     */
+    public function normalize(NormalizerInterface $normalizer, $format = null, array $context = [])
+    {
+        return [
+            'id' => $this->id,
+            'login' => $this->login,
+            'fullName' => $this->fullName,
+            'endOfSubscriptionDate' => is_null($this->subscription) ? '' : $this->subscription->getDateObject()->format('d-m-Y'),
+        ];
     }
 }

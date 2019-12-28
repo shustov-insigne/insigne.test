@@ -40,8 +40,13 @@ class AppFixtures extends Fixture
             ->setId(Group::BROWSER_USER)
             ->setName(Group::BROWSER_USER);
 
+        $apiUserGroup = (new Group())
+            ->setId(Group::API_USER)
+            ->setName(Group::API_USER);
+
         $manager->persist($adminGroup);
         $manager->persist($defaultGroup);
+        $manager->persist($apiUserGroup);
         $manager->flush();
 
         // admin
@@ -56,6 +61,17 @@ class AppFixtures extends Fixture
         $admin->setPassword($this->passwordEncoder->encodePassword($admin, 'admin'));
         $manager->persist($admin);
 
+        // api user
+
+        $apiUser = (new User())
+            ->addGroup($apiUserGroup)
+            ->addGroup($adminGroup)
+            ->setLogin(User::API_USER_LOGIN)
+            ->setFirstName('Пользователь')
+            ->setLastName('API');
+
+        $manager->persist($apiUser);
+
         // non admin users
 
         for ($index = 0; $index < static::NON_ADMIN_USERS_COUNT; ++$index) {
@@ -63,7 +79,7 @@ class AppFixtures extends Fixture
             $firstName = 'user';
             $lastName = "number_{$index}";
             $login = "{$firstName}_{$lastName}";
-            $email = "{$firstName}@{$lastName}";
+            $email = "{$firstName}@{$lastName}.com";
 
             $user = (new User())
                 ->addGroup($defaultGroup)
@@ -74,7 +90,6 @@ class AppFixtures extends Fixture
 
             $user->setPassword($this->passwordEncoder->encodePassword($user, $login));
             $manager->persist($user);
-
         }
 
         $manager->flush();
