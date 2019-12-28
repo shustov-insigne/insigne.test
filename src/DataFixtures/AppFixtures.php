@@ -77,8 +77,9 @@ class AppFixtures extends Fixture
         for ($index = 0; $index < static::NON_ADMIN_USERS_COUNT; ++$index) {
 
             $firstName = 'user';
-            $lastName = "number_{$index}";
-            $login = "{$firstName}_{$lastName}";
+            $lastName = "last_name_{$index}";
+            $secondName = "second_name_{$index}";
+            $login = $firstName . ucfirst($lastName);
             $email = "{$firstName}@{$lastName}.com";
 
             $user = (new User())
@@ -86,6 +87,7 @@ class AppFixtures extends Fixture
                 ->setLogin($login)
                 ->setFirstName($firstName)
                 ->setLastName($lastName)
+                ->setSecondName($secondName)
                 ->setEmail($email);
 
             $user->setPassword($this->passwordEncoder->encodePassword($user, $login));
