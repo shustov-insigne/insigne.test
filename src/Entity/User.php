@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="app_user")
  */
-class User implements UserInterface, NormalizableInterface
+class User implements UserInterface, NormalizableInterface ,CacheableInterface
 {
     public const API_USER_LOGIN = 'api_user';
 
@@ -383,5 +383,13 @@ class User implements UserInterface, NormalizableInterface
             'fullName' => $this->fullName,
             'endOfSubscriptionDate' => is_null($this->subscription) ? '' : $this->subscription->getDateObject()->format('d-m-Y'),
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getCacheKeys(): array
+    {
+        return ['non_admin_users'];
     }
 }

@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="App\Repository\SubscriptionRepository")
  * @ORM\Table(name="app_subscription")
  */
-class Subscription
+class Subscription implements CacheableInterface
 {
     /**
      * @ORM\Id()
@@ -95,5 +95,13 @@ class Subscription
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCacheKeys(): array
+    {
+        return ['non_admin_users'];
     }
 }

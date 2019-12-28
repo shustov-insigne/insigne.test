@@ -19,7 +19,9 @@ use Symfony\Component\Serializer\Normalizer\CustomNormalizer;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class UserController extends AbstractController
 {
@@ -54,15 +56,21 @@ class UserController extends AbstractController
      * @Route("/users", name="api_get_all_users", methods={"GET"}, host="api.{domain}.{extension}")
      *
      * @return JsonResponse
-     *
-     * @throws \Doctrine\ORM\Query\QueryException
      */
     public function getAll()
     {
-        $result = (new Result(ResultType::READ))
-            ->setData($this->repository->getNonAdminUsersWithSubscription());
+        $pool = new FilesystemAdapter('app.public_api', 3600, 'cache');
 
-        return new JsonResponse($this->serializer->serialize($result, 'json'), Response::HTTP_OK, [], true);
+        // The callable will only be executed on a cache miss.
+        $formattedResult = $pool->get('non_admin_users', function (ItemInterface $item) {
+
+            $result = (new Result(ResultType::READ))
+                ->setData($this->repository->getNonAdminUsersWithSubscription());
+
+            return $this->serializer->serialize($result, 'json');
+        });
+
+        return new JsonResponse($formattedResult, Response::HTTP_OK, [], true);
     }
 
     /**
